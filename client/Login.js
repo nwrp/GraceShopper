@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { loginAttempt } from './store';
+import { loginAttempt, fetchUserOrders } from './store';
 
 class Login extends Component {
     constructor() {
@@ -23,7 +23,10 @@ class Login extends Component {
             password: this.state.password
         })
             .then(user => {
-                if (user.id) this.props.history.push('/')
+                if (user.id) {
+                    this.props.requestFetchUserOrders(user.id)
+                    this.props.history.push('/')
+                }
             })
             .catch(error => this.setState({
                 error,
@@ -57,7 +60,8 @@ class Login extends Component {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        login: (user) => dispatch(loginAttempt(user))
+        login: (user) => dispatch(loginAttempt(user)),
+        requestFetchUserOrders: (userId) => dispatch(fetchUserOrders(userId))
     }
 }
 

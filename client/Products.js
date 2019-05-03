@@ -1,10 +1,10 @@
-import React from "react";
-import { Card, Container, Col, Row } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import { connect } from "react-redux";
+import React from 'react';
+import { Card, Container, Col, Row } from 'react-bootstrap';
+import { connect } from 'react-redux';
 
 const Products = ({ products, categories, match }) => {
   let displayProducts = [];
+
   if (match.params.categoryId) {
     displayProducts = products.filter(
       prod => prod.categoryId === match.params.categoryId * 1
@@ -15,6 +15,7 @@ const Products = ({ products, categories, match }) => {
   const findCategory = (product, cats) => {
     return cats.find(cat => cat.id === product.categoryId);
   };
+
   return (
     <Container className="d-flex mt-3">
       {/* Make sure to be defensive when loading products based on the category */}
@@ -26,12 +27,9 @@ const Products = ({ products, categories, match }) => {
                 <Card
                   key={product.id}
                   style={{
-                    width: "15rem",
-                    height: "27rem"
-
-                    // borderColor: `${
-                    //   this.findCategory(product, categories).color
-                    // }`
+                    width: '15rem',
+                    height: '27rem',
+                    borderColor: `${findCategory(product, categories).color}`
                   }}
                   className="mb-3 mt-3 shadow bg-white rounded"
                 >
@@ -45,12 +43,15 @@ const Products = ({ products, categories, match }) => {
                   >
                     {findCategory(product, categories).name}
                   </Card.Header>
-                  <Link to={`/products/${product.id}`}>
-                    <Card.Body className="text-center">
+                  <Card.Body className="text-center">
+                    <Card.Link
+                      style={{ textDecoration: 'none' }}
+                      href={`/#/products/${product.id}`}
+                    >
                       <Card.Img src={product.imageUrl} />
                       <Card.Title>{product.title}</Card.Title>
-                    </Card.Body>
-                  </Link>
+                    </Card.Link>
+                  </Card.Body>
                   <Card.Footer
                     className="text-center"
                     style={{
@@ -68,7 +69,7 @@ const Products = ({ products, categories, match }) => {
           })}
         </Row>
       ) : (
-        "No Products Found (We can update with a better message later"
+        'No Products Found'
       )}
     </Container>
   );

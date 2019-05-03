@@ -1,7 +1,6 @@
-import React from 'react';
-import { Card, Container, Col, Row } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
+import React from "react";
+import { Card, Container, Col, Row } from "react-bootstrap";
+import { connect } from "react-redux";
 
 const Home = ({ categories }) => {
   return (
@@ -10,18 +9,26 @@ const Home = ({ categories }) => {
         {categories.map(category => {
           return (
             <Col lg={true} xl={true} key={category.id}>
-              <Link to={`/products/category/${category.id}`}>
-                <Card
-                  style={{
-                    width: '15rem',
-                    height: '15rem',
-                    backgroundColor: `${category.color}`,
-                  }}
-                  className="my-3 justify-content-center "
-                >
-                  <Container className="text-center">{category.name}</Container>
-                </Card>
-              </Link>
+              <Card
+                style={{
+                  width: "15rem",
+                  height: "15rem",
+                  backgroundColor: `${category.color}`
+                }}
+                className="my-3 justify-content-center "
+              >
+                <Card.Link href={`/#/products/category/${category.id}`}>
+                  <Card.Text
+                    className="white-text-with-blue-shadow text-center"
+                    style={{
+                      fontSize: "22px",
+                      color: "white"
+                    }}
+                  >
+                    {category.name}
+                  </Card.Text>
+                </Card.Link>
+              </Card>
             </Col>
           );
         })}
@@ -32,7 +39,7 @@ const Home = ({ categories }) => {
 
 const mapStateToProps = ({ categories }) => {
   return {
-    categories,
+    categories
   };
 };
 

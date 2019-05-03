@@ -1,10 +1,19 @@
 const router = require('express').Router();
-const { Product } = require('../db/models');
+const { Product, ProductImage } = require('../db/models');
 
 //GET /api/products
 router.get('/', (req, res, next) => {
   Product.findAll()
     .then(products => res.send(products))
+    .catch(next);
+});
+
+//GET /api/products/productId/productimagesId
+router.get('/productImages', (req, res, next) => {
+  ProductImage.findAll({
+    include: [{ model: Product }]
+  })
+    .then(images => res.send(images))
     .catch(next);
 });
 
@@ -27,8 +36,8 @@ router.put('/', (req, res, next) => {
 router.delete('/', (req, res, next) => {
   Product.destroy({
     where: {
-      id: req.params.id,
-    },
+      id: req.params.id
+    }
   })
     .then(() => res.sendStatus(204))
     .catch(next);
