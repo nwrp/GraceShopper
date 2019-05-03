@@ -5,7 +5,7 @@
   "main": "./server/index.js",
   "scripts": {
     "test": "DATABASE_URL=postgres://localhost/graceshopper ./node_modules/mocha/bin/mocha ./specs/setup.js ./specs/ --recursive --watch",
-    "start": "node index.js",
+    "start": "node ./server/index.js",
     "start:server": "DATABASE_URL=postgres://localhost/graceshopper nodemon ./server/index.js",
     "postinstall": "./node_modules/webpack/bin/webpack.js",
     "webpack": "webpack",
