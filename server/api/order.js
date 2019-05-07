@@ -3,6 +3,12 @@ const { Order, LineItem, Product, User } = require('../db/models');
 
 // Post route needs to check if pending order exists (throw error if order exists)
 
+router.post('/user/:id', (req, res, next) => {
+    Order.create(req.body)
+        .then(newOrder => res.send(newOrder))
+        .catch(next)
+})
+
 // Returns user's orders
 router.get('/user/:id', (req, res, next) => {
     User.findByPk(req.params.id)
@@ -59,5 +65,19 @@ router.get('/', (req, res, next) => {
         .then(orders => res.send(orders))
         .catch(next);
 });
+
+//creates a new line item
+router.post('/:id', async (req, res, next) => {
+  try {
+    const lineItem = await LineItem.create(req.body);
+    const lineItemWithProd = await LineItem.findByPk(lineItem.id, {
+    include: [ {model: Product}]
+    })
+    res.send(lineItemWithProd);
+  }
+  catch (er) {
+     next(er);
+  }
+})
 
 module.exports = router;

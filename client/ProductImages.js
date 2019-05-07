@@ -2,22 +2,38 @@ import React, { Fragment } from 'react';
 import { Button, ButtonGroup, Container, Image, Row } from 'react-bootstrap';
 import { connect } from 'react-redux';
 
-const ProductImages = ({ productImages, prodIdx, handleClick }) => {
-  const foundImages = productImages.filter(img => img.productId === prodIdx);
+const ProductImages = ({
+  categories,
+  products,
+  productImages,
+  prodId,
+  handleClick,
+  categoryColor
+}) => {
+  const product = products[prodId];
 
+  const foundImages = productImages.filter(img => img.productId === prodId);
+
+  console.log('categories', categories);
   return (
     <Fragment>
-      {foundImages.length ? (
+      {product ? (
         <Container>
           <Row className="d-flex justify-content-center">
             {foundImages.map(img => (
               <ButtonGroup key={img.id}>
                 <Button
                   className="mr-2 mb-2"
-                  variant="outline-info"
                   type="button"
+                  style={{
+                    backgroundColor: `${categoryColor}`,
+                    borderRadius: '6px'
+                  }}
+                  size="sm"
+                  variant="outline"
                   onClick={handleClick}
                   href={img.imageUrl}
+                  active
                 >
                   <Image
                     style={{ height: '80px' }}
@@ -37,9 +53,11 @@ const ProductImages = ({ productImages, prodIdx, handleClick }) => {
   );
 };
 
-const mapStateToProps = ({ productImages }) => {
+const mapStateToProps = ({ categories, productImages, products }) => {
   return {
-    productImages
+    categories,
+    productImages,
+    products
   };
 };
 

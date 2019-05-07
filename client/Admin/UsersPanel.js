@@ -49,17 +49,13 @@ class UsersPanel extends Component {
           <Col>
             <Card>
               <Card.Header>
-                <Accordion.Toggle as={Button} variant="link" eventKey="1">
+                <Accordion.Toggle as={Card.Header} eventKey="0">
                   <h6>Users</h6>
                 </Accordion.Toggle>
               </Card.Header>
-              <Accordion.Collapse eventKey="1">
+              <Accordion.Collapse eventKey="0">
                 <Card.Body>
-                  <Table
-                    hover
-                    responsive
-                    className="table-outline mb-0 d-none d-sm-table"
-                  >
+                  <Table hover responsive size="sm" className="table-outline">
                     <thead>
                       <tr>
                         <th scope="col">Id</th>

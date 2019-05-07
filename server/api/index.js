@@ -10,4 +10,6 @@ router.use('/categories', require('./category'));
 
 router.use('/users', require('./users'));
 
+router.use('/cart', require('./cart'));
+
 module.exports = router;
