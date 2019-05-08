@@ -12,6 +12,11 @@ class Navigation extends Component {
       categoryId: 'all'
     };
   }
+
+  logout = () => {
+    this.props.logout();
+    this.props.history.push('/')
+  }
   onChange = ev => {
     this.setState({ [ev.target.name]: ev.target.value });
   };
@@ -56,20 +61,22 @@ class Navigation extends Component {
               <Nav.Link as={Link} to="/admin" className="mr-auto">
                 admin
               </Nav.Link>
-            ) : (
-              <Nav.Link as={Link} to="/user" className="mr-auto">
-                user
-              </Nav.Link>
-            )}
+            ) : ('')}
+            
             <Nav.Item>
               {this.props.isLoggedIn ? (
-                <button
-                  className="mr-auto"
-                  type="button"
-                  onClick={this.props.logout}
-                >
+                <div>
+                  <button
+                    className="mr-auto"
+                    type="button"
+                    onClick={this.logout}
+                  >
                   logout
-                </button>
+                  </button>
+                  <Nav.Link as={Link} to="/user" className="mr-auto">
+                    user
+                  </Nav.Link>
+                </div>
               ) : (
                 <Nav.Link as={Link} to="/login" className="mr-auto">
                   login
