@@ -15,54 +15,77 @@ const CREATE_CART = 'CREATE_CART';
 const GET_ORDERS = 'GET_ORDERS';
 const ADD_LINEITEM = 'ADD_LINEITEM';
 const SET_SESSION_CART = 'SET_SESSION_CART';
+const SET_NAV_SEARCH_VALUES = 'SET_NAV_SEARCH_VALUES';
+const GET_REVIEWS = 'GET_REVIEWS';
+const UPDATE_QUANTITY = 'UPDATE_QUANTITY';
 
 //ACTION CREATORS
 
+const getReviews = reviews => ({
+  type: GET_REVIEWS,
+  reviews,
+});
+
 const getOrders = orders => ({
   type: GET_ORDERS,
-  orders
+  orders,
 });
 
 const setUserActionCreator = user => ({
   type: SET_USER,
-  user
+  user,
 });
 
 const getUsers = users => ({
   type: GET_USERS,
-  users
+  users,
 });
 
 const getCategories = categories => ({
   type: GET_CATEGORIES,
-  categories
+  categories,
 });
 
 const getProducts = products => ({
   type: GET_PRODUCTS,
-  products
+  products,
 });
 
 const getProductImages = productImages => ({
   type: GET_PRODUCT_IMAGES,
-  productImages
+  productImages,
 });
 
 const createCartActionCreator = order => ({
   type: CREATE_CART,
-  order
+  order,
 });
 
 const addLineItemAC = item => ({
   type: ADD_LINEITEM,
-  item
+  item,
 });
 const setSessionCart = sessionCart => ({
   type: SET_SESSION_CART,
-  sessionCart
+  sessionCart,
+});
+
+const setNavSearchValues = (categoryId, searchTerm) => ({
+  type: SET_NAV_SEARCH_VALUES,
+  categoryId,
+  searchTerm,
 });
 
 //THUNKS
+
+const fetchReviews = () => {
+  return dispatch => {
+    return axios
+      .get('/api/reviews')
+      .then(response => response.data)
+      .then(reviews => dispatch(getReviews(reviews)));
+  };
+};
 
 const fetchCategories = () => {
   return dispatch => {
@@ -169,6 +192,15 @@ const getSessionCart = () => {
   };
 };
 
+const deleteItemSessionCart = (productId) => {
+  return dispatch => {
+    return axios
+      .delete(`./api/cart/${productId}`)
+      .then(res => res.data)
+      .then(data => dispatch(setSessionCart(data)))
+  }
+}
+
 //create a cart for logged-in user by calling the post route
 const createPendingOrder = order => {
   return dispatch => {
@@ -195,11 +227,35 @@ const addToCart = item => {
   };
 };
 
+const updateNavSearchValsBasedOnURL = (categoryId, searchTerm) => {
+  return dispatch => {
+    dispatch(setNavSearchValues(categoryId, searchTerm));
+  };
+};
+
+//update a line-item when quantity in cart is changed
+const updateQuantity = (id, quantity) => {
+  return dispatch => {
+    return axios
+      .put(`/api/orders/lineitems/${id}`, { quantity })
+      .then(() => dispatch(updateQuantityAC(id, quantity)));
+  };
+};
+
 // const mergeCarts = (sessionCart, pendingOrder) => {
 
 // }
 
 //REDUCERS
+
+const reviews = (state = [], action) => {
+  switch (action.type) {
+    case GET_REVIEWS:
+      return action.reviews;
+    default:
+      return state;
+  }
+};
 
 const categories = (state = [], action) => {
   switch (action.type) {
@@ -248,31 +304,40 @@ const users = (state = {}, action) => {
 
 const orders = (state = [], action) => {
   switch (action.type) {
-      case GET_ORDERS:
-          return action.orders;
-      case CREATE_CART:
-          const cart = action.order;
-          cart.lineitems = [];
-          return [...state, cart];
-      case ADD_LINEITEM:
-          return state.map(order => {
-            if (order.status === 'pending') {
-              if (!order.lineitems){
-                order.lineitems = [action.item]
-              } else {
-              order.lineitems.push(action.item)
-              }
-            }
-            return order;
-          })
-      default:
-          return state;
+    case GET_ORDERS:
+      return action.orders;
+    case CREATE_CART:
+      const cart = action.order;
+      cart.lineitems = [];
+      return [...state, cart];
+    case ADD_LINEITEM:
+      return state.map(order => {
+        if (order.status === 'pending') {
+          if (!order.lineitems) {
+            order.lineitems = [action.item];
+          } else {
+            order.lineitems.push(action.item);
+          }
+        }
+        return order;
+      });
+    default:
+      return state;
   }
 };
 const sessionCart = (state = {}, action) => {
   switch (action.type) {
     case SET_SESSION_CART:
       return action.sessionCart;
+    default:
+      return state;
+  }
+};
+
+const navSearchTerms = (state = {}, action) => {
+  switch (action.type) {
+    case SET_NAV_SEARCH_VALUES:
+      return { categoryId: action.categoryId, searchTerm: action.searchTerm };
     default:
       return state;
   }
@@ -285,7 +350,9 @@ const reducer = combineReducers({
   user,
   users,
   orders,
-  sessionCart
+  sessionCart,
+  navSearchTerms,
+  reviews,
 });
 
 const store = createStore(
@@ -308,5 +375,9 @@ export {
   addToCart,
   createSessionCart,
   setSessionCart,
-  getSessionCart
+  getSessionCart,
+  deleteItemSessionCart,
+  updateNavSearchValsBasedOnURL,
+  fetchReviews,
+  updateQuantity,
 };

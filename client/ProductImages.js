@@ -14,7 +14,6 @@ const ProductImages = ({
 
   const foundImages = productImages.filter(img => img.productId === prodId);
 
-  console.log('categories', categories);
   return (
     <Fragment>
       {product ? (
@@ -26,19 +25,18 @@ const ProductImages = ({
                   className="mr-2 mb-2"
                   type="button"
                   style={{
-                    backgroundColor: `${categoryColor}`,
-                    borderRadius: '6px'
+                    backgroundColor: `${categoryColor}`
+                    // borderRadius: '6px'
                   }}
                   size="sm"
                   variant="outline"
                   onClick={handleClick}
                   href={img.imageUrl}
-                  active
+                  // active
                 >
                   <Image
                     style={{ height: '80px' }}
                     src={img.imageUrl}
-                    rounded
                     className="align-items-center"
                   />
                 </Button>

@@ -1,7 +1,9 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { Button, Card, Col, Container, Row } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import ProductImages from './ProductImages';
+import Ratings from './Ratings';
+import Reviews from './Reviews';
 import {
   createPendingOrder,
   addToCart,
@@ -18,7 +20,10 @@ class ProductDetail extends Component {
   }
 
   componentDidMount() {
-    if (this.props.match.params.id !== localStorage.getItem('matchParams') && this.props.products.length) {
+    if (
+      this.props.match.params.id !== localStorage.getItem('matchParams') &&
+      this.props.products.length
+    ) {
       this.setState({
         displayImage: this.displayProduct().imageUrl
       });
@@ -28,7 +33,6 @@ class ProductDetail extends Component {
   }
 
   hydrateStateWithLocalStorage = () => {
-    console.log("hydrate");
     if (localStorage.hasOwnProperty('displayImage')) {
       let value = localStorage.getItem('displayImage');
       try {
@@ -48,13 +52,10 @@ class ProductDetail extends Component {
   };
 
   displayProduct = () => {
-    console.log("display");
-    console.log(this.props.products.length);
     if (this.props.products.length) {
       const displayProd = this.props.products.find(
         prod => prod.id === this.props.match.params.id * 1
       );
-      console.log(displayProd);
       return displayProd;
     }
   };
@@ -153,89 +154,122 @@ class ProductDetail extends Component {
     this.props.history.push('/cart');
   };
 
+  findReviewsByProduct = product => {
+    return this.props.reviews.filter(rev => rev.productId === product.id);
+  };
+
   render() {
     if (!this.props.products.length || !this.props.categories.length) {
+      return <div> loading </div>;
+    } else {
+      const { categories, reviews } = this.props;
+
+      const product = this.props.products.find(
+        prd => prd.id === this.props.match.params.id * 1
+      );
+
+      const averageRating = () => {
+        let ratingsSum = 0;
+        const prodReviews = reviews.filter(rev => rev.productId === product.id);
+        prodReviews.forEach(review => {
+          ratingsSum += review.rating;
+        });
+        return Math.ceil(ratingsSum / prodReviews.length);
+      };
+      const productReviews = this.findReviewsByProduct(product);
+
       return (
-        <div> loading </div>
-      )
+        <Fragment>
+          <Container className="d-flex-row mt-5">
+            {/* Make sure to be defensive when loading a single product */}
+            {product ? (
+              <div>
+                <Row>
+                  <Col className="mr-3">
+                    <Card>
+                      <Card.Header
+                        className="text-center"
+                        style={{
+                          backgroundColor: `${
+                            this.findCategory(product, categories).color
+                          }`
+                        }}
+                      >
+                        {this.findCategory(product, categories).name}
+                      </Card.Header>
+                      <Card.Body className="text-center">
+                        <Card.Img src={this.state.displayImage} />
+                      </Card.Body>
+                      <Card.Footer
+                        className="text-center"
+                        style={{
+                          backgroundColor: `${
+                            this.findCategory(product, categories).color
+                          }`
+                        }}
+                      >
+                        <Card.Subtitle>
+                          ${product.price}
+                          <span> / {product.quantity} inStock</span>
+                        </Card.Subtitle>
+                      </Card.Footer>
+                    </Card>
+                    <Row className="justify-content-center mt-3">
+                      <div className="m-3">
+                        <Ratings rating={averageRating()} starSize="fa-3x" />
+                      </div>
+                      <Button
+                        className=" m-3"
+                        variant="outline-success"
+                        type="button"
+                        onClick={() => this.addToCart(product, 1)}
+                        size="lg"
+                      >
+                        <i className="fas fa-shopping-cart" />
+                      </Button>
+                    </Row>
+                  </Col>
+                  <Col className="d-flex flex-column align-item-start">
+                    <Row className="d-flex m-auto">
+                      <h4>{product.title}</h4>
+                      <p className="text-justify">{product.description}</p>
+                    </Row>
+                    <Row>
+                      <ProductImages
+                        categoryColor={
+                          this.findCategory(product, categories).color
+                        }
+                        prodId={product.id}
+                        handleClick={this.handleClick}
+                      />
+                    </Row>
+                  </Col>
+                </Row>
+                <Row className="my-5">
+                  <Col>
+                    <Card>
+                      <Card.Header
+                        className="text-center"
+                        // style={{
+                        //   backgroundColor: `${
+                        //     this.findCategory(product, categories).color
+                        //   }`
+                        // }}
+                      >
+                        Verified Puchase Reviews
+                      </Card.Header>
+                      <Reviews reviews={productReviews} />
+                    </Card>
+                  </Col>
+                </Row>
+              </div>
+            ) : (
+              'No Product Found'
+            )}
+          </Container>
+        </Fragment>
+      );
     }
-
-    else {
-
-    const { categories } = this.props;
-
-    const product = this.props.products.find(
-      prd => prd.id === this.props.match.params.id * 1
-    );
-
-    console.log('props in ProductDetail', this.props);
-
-   
-
-    return (
-      <Container className="d-flex mt-5">
-        {/* Make sure to be defensive when loading a single product */}
-        {product ? (
-          <Row>
-            <Col className="mr-3">
-              <Card>
-                <Card.Header
-                  className="text-center"
-                  style={{
-                    backgroundColor: `${
-                      this.findCategory(product, categories).color
-                    }`
-                  }}
-                >
-                  {this.findCategory(product, categories).name}
-                </Card.Header>
-                <Card.Body className="text-center">
-                  <Card.Img src={this.state.displayImage} />
-                </Card.Body>
-                <Card.Footer
-                  className="text-center"
-                  style={{
-                    backgroundColor: `${
-                      this.findCategory(product, categories).color
-                    }`
-                  }}
-                >
-                  <Card.Subtitle>
-                    ${product.price}
-                    <span> / {product.quantity} inStock</span>
-                  </Card.Subtitle>
-                </Card.Footer>
-              </Card>
-
-              <Button
-                className="mt-2"
-                variant="outline-success"
-                type="button"
-                onClick={() => this.addToCart(product, 1)}
-                block
-              >
-                Add to Cart
-              </Button>
-            </Col>
-            <Col className="d-flex flex-column align-items-start">
-              <Row className="d-flex mt-auto mb-auto">
-                <h4>{product.title}</h4>
-                <p className="text-justify">{product.description}</p>
-              </Row>
-              <ProductImages
-                categoryColor={this.findCategory(product, categories).color}
-                prodId={product.id}
-                handleClick={this.handleClick}
-              />
-            </Col>
-          </Row>
-        ) : (
-          'No Product Found'
-        )}
-      </Container>
-        
-    );
-        }
   }
 }
 
@@ -244,11 +278,13 @@ const mapStateToProps = ({
   products,
   user,
   sessionCart,
-  orders
+  orders,
+  reviews
 }) => {
   return {
     user,
     products,
+    reviews,
     categories,
     sessionCart,
     order: orders.find(order => order.status === 'pending')

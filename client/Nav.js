@@ -2,57 +2,68 @@ import React, { Component, Fragment } from 'react';
 import { Navbar, Nav, Form, FormControl, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { logout } from './store';
+import { logout, updateNavSearchValsBasedOnURL } from './store';
 
 class Navigation extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      searchTerm: '',
-      categoryId: 'all'
-    };
+    if (!props.navSearchTerms.categoryId || !props.navSearchTerms.searchTerm) {
+      this.state = {
+        searchTerm: '',
+        categoryId: '0',
+      };
+    } else {
+      this.state = {
+        searchTerm: props.navSearchTerms.searchTerm
+          ? props.navSearchTerms.searchTerm
+          : '',
+        categoryId: props.navSearchTerms.categoryId
+          ? props.navSearchTerms.categoryId
+          : '0',
+      };
+    }
   }
-
+  componentDidUpdate(prevProps) {
+    const { navSearchTerms } = this.props;
+    if (
+      prevProps.navSearchTerms.categoryId !== navSearchTerms.categoryId ||
+      prevProps.navSearchTerms.searchTerm !== navSearchTerms.searchTerm
+    ) {
+      this.setState({
+        searchTerm: navSearchTerms.searchTerm ? navSearchTerms.searchTerm : '',
+        categoryId: navSearchTerms.categoryId ? navSearchTerms.categoryId : '0',
+      });
+    }
+  }
   logout = () => {
     this.props.logout();
-    this.props.history.push('/')
-  }
+    this.props.history.push('/');
+  };
   onChange = ev => {
     this.setState({ [ev.target.name]: ev.target.value });
   };
   searchByTerm = () => {
     const { searchTerm, categoryId } = this.state;
     const { history } = this.props;
-    history.push(`/products/category/${categoryId}/search/${searchTerm}`);
+    history.push(`/products/search/category/${categoryId}/term/${searchTerm}`);
   };
   render() {
     const { searchTerm, categoryId } = this.state;
-    const { categories, isLoggedIn, user } = this.props;
+    const { categories, isLoggedIn, user, clearNavSearchTerms } = this.props;
     const { onChange, searchByTerm } = this;
-    // console.log('user in Nav', user);
-    console.log('props in Nav', this.props);
-    console.log('isLoggedIn in Nav', this.props.isLoggedIn);
 
     return (
       <Fragment>
         <Navbar bg="light">
           <Navbar.Brand>Grace Shopper</Navbar.Brand>
           <Nav className="mr-auto">
-            <Nav.Link
-              as={Link}
-              to="/"
-              onClick={() =>
-                this.setState({ searchTerm: '', categoryId: 'all' })
-              }
-            >
+            <Nav.Link as={Link} to="/" onClick={() => clearNavSearchTerms()}>
               Home
             </Nav.Link>
             <Nav.Link
               as={Link}
               to="/products"
-              onClick={() =>
-                this.setState({ searchTerm: '', categoryId: 'all' })
-              }
+              onClick={() => clearNavSearchTerms()}
             >
               Products
             </Nav.Link>
@@ -61,8 +72,10 @@ class Navigation extends Component {
               <Nav.Link as={Link} to="/admin" className="mr-auto">
                 admin
               </Nav.Link>
-            ) : ('')}
-            
+            ) : (
+              ''
+            )}
+
             <Nav.Item>
               {this.props.isLoggedIn ? (
                 <div>
@@ -71,7 +84,7 @@ class Navigation extends Component {
                     type="button"
                     onClick={this.logout}
                   >
-                  logout
+                    logout
                   </button>
                   <Nav.Link as={Link} to="/user" className="mr-auto">
                     user
@@ -96,7 +109,7 @@ class Navigation extends Component {
                 onChange={onChange}
                 name="categoryId"
               >
-                <option value="all">All</option>
+                <option value="0">All</option>
                 {categories.map(cat => (
                   <option key={cat.id} value={cat.id}>
                     {cat.name}
@@ -127,17 +140,19 @@ class Navigation extends Component {
   }
 }
 
-const mapStateToProps = ({ user, categories }) => {
+const mapStateToProps = ({ user, categories, navSearchTerms }) => {
   return {
     isLoggedIn: !!user.id,
     categories,
-    user
+    user,
+    navSearchTerms,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    logout: () => dispatch(logout())
+    logout: () => dispatch(logout()),
+    clearNavSearchTerms: () => dispatch(updateNavSearchValsBasedOnURL('0', '')),
   };
 };
 

@@ -8,6 +8,8 @@ router.use('/auth', require('./auth'));
 
 router.use('/categories', require('./category'));
 
+router.use('/reviews', require('./productreviews'));
+
 router.use('/users', require('./users'));
 
 router.use('/cart', require('./cart'));

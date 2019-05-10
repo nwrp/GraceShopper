@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import {
   Accordion,
   Badge,
@@ -8,14 +8,14 @@ import {
   Col,
   Row,
   Table
-} from 'react-bootstrap';
+} from "react-bootstrap";
 
 function UserRow(props) {
   const user = props.user;
   const userLink = `/users/${user.id}`;
 
   const getBadge = isAdmin => {
-    return isAdmin ? 'success' : 'primary';
+    return isAdmin ? "success" : "primary";
   };
 
   return (
@@ -31,7 +31,7 @@ function UserRow(props) {
       <td>
         <Link to={userLink}>
           <Badge color={getBadge(user.isAdmin)}>
-            {user.isAdmin ? 'Administrator' : 'User'}
+            {user.isAdmin ? "Administrator" : "User"}
           </Badge>
         </Link>
       </td>
@@ -49,11 +49,11 @@ class UsersPanel extends Component {
           <Col>
             <Card>
               <Card.Header>
-                <Accordion.Toggle as={Card.Header} eventKey="0">
+                <Accordion.Toggle as={Card.Header} eventKey="1">
                   <h6>Users</h6>
                 </Accordion.Toggle>
               </Card.Header>
-              <Accordion.Collapse eventKey="0">
+              <Accordion.Collapse eventKey="1">
                 <Card.Body>
                   <Table hover responsive size="sm" className="table-outline">
                     <thead>

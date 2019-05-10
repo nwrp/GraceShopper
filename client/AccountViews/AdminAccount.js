@@ -9,7 +9,7 @@ class Admin extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      accordion: []
+      accordion: [],
     };
   }
 
@@ -22,7 +22,7 @@ class Admin extends Component {
     const state = prevState.map((x, index) => (tab === index ? !x : false));
 
     this.setState({
-      accordion: state
+      accordion: state,
     });
   };
 
@@ -60,7 +60,7 @@ const mapStateToProps = ({ products, users, user, orders }) => {
     products,
     users,
     orders,
-    user
+    user,
   };
 };
 

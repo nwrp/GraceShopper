@@ -13,10 +13,10 @@ import {
   Input,
   Label,
   Table,
-  Row,
+  Row
 } from 'reactstrap';
 
-class Checkout extends Component {
+class CheckoutGeneric extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -25,7 +25,7 @@ class Checkout extends Component {
       collapseItems: false,
       customShipping: [false, false],
       customPayment: [false, false],
-      customItems: [true, false],
+      customItems: [true, false]
     };
   }
 
@@ -46,15 +46,16 @@ class Checkout extends Component {
     const state = prevState.map((x, index) => (tab === index ? !x : false));
 
     this.setState({
-      customItems: state,
+      customItems: state
     });
   };
+  
   toggleCustomShipping = tab => {
     const prevState = this.state.customShipping;
     const state = prevState.map((x, index) => (tab === index ? !x : false));
 
     this.setState({
-      customShipping: state,
+      customShipping: state
     });
   };
 
@@ -63,7 +64,7 @@ class Checkout extends Component {
     const state = prevState.map((x, index) => (tab === index ? !x : false));
 
     this.setState({
-      customPayment: state,
+      customPayment: state
     });
   };
 
@@ -74,10 +75,6 @@ class Checkout extends Component {
         return acc;
       }, 0)
       .toFixed(2);
-  };
-
-  priceFormat = numberString => {
-    return numberString.toLocaleString(undefined, { minimumFractionDigits: 2 });
   };
 
   render() {
@@ -158,16 +155,14 @@ class Checkout extends Component {
                                     {/* {item.product.title} */}
                                     <Link
                                       style={{ textDecoration: 'none' }}
-                                      to={`/products/detail/${item.productId}`}
+                                      to={`/products/${item.productId}`}
                                     >
                                       {item.product.title}
                                     </Link>
                                   </div>
                                 </div>
                               </td>
-                              <td className="text-right">
-                                {this.priceFormat(item.orderPrice)}
-                              </td>
+                              <td className="text-right">{item.orderPrice}</td>
                               <td className="text-right">{item.discount}</td>
                               <td className="text-right">{item.quantity}</td>
                               <td className="text-right">
@@ -217,6 +212,14 @@ class Checkout extends Component {
                       />
                     </FormGroup>
                     <FormGroup>
+                      <Label htmlFor="vat">Company</Label>
+                      <Input
+                        type="text"
+                        id="vat"
+                        placeholder="Enter your company"
+                      />
+                    </FormGroup>
+                    <FormGroup>
                       <Label htmlFor="street">Street</Label>
                       <Input
                         type="text"
@@ -225,23 +228,13 @@ class Checkout extends Component {
                       />
                     </FormGroup>
                     <FormGroup row className="my-0">
-                      <Col xs="6">
+                      <Col xs="8">
                         <FormGroup>
                           <Label htmlFor="city">City</Label>
                           <Input
                             type="text"
                             id="city"
                             placeholder="Enter city"
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col xs="2">
-                        <FormGroup>
-                          <Label htmlFor="city">State</Label>
-                          <Input
-                            type="text"
-                            id="state"
-                            placeholder="Enter State"
                           />
                         </FormGroup>
                       </Col>
@@ -380,8 +373,8 @@ class Checkout extends Component {
 const mapStateToProps = ({ user, orders }) => {
   return {
     user: user,
-    order: orders.find(order => order.status === 'pending'),
+    order: orders.find(order => order.status === 'pending')
   };
 };
 
-export default connect(mapStateToProps)(Checkout);
+export default connect(mapStateToProps)(CheckoutGeneric);
