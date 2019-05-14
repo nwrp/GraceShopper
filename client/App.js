@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
-import { HashRouter, Route, Switch } from 'react-router-dom';
+import { HashRouter, Route, Switch, Link } from 'react-router-dom';
+import { Alert } from 'react-bootstrap';
 import Products from './Products';
 import Navigation from './Nav';
 import ProductDetail from './ProductDetail';
@@ -13,7 +14,7 @@ import {
   fetchUsers,
   sessionLogin,
   getSessionCart,
-  fetchUserOrders
+  fetchUserOrders,
 } from './store';
 import Home from './Home';
 import Admin from './AccountViews/AdminAccount';
@@ -24,9 +25,20 @@ import CheckoutGeneric from './CheckoutGeneric';
 import CheckoutSuccess from './CheckoutSuccess';
 import UserAccount from './AccountViews/UserAccount';
 import SignUp from './SignUp';
+import io from 'socket.io-client';
+const socket = io(window.location.origin);
 
 class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      alert: {},
+    };
+  }
   componentDidMount() {
+    socket.on('flashSaleProd', alert => {
+      this.setState({ alert: alert });
+    });
     this.props.fetchInitialCategories();
     this.props.fetchInitialProducts();
     this.props.fetchInitialProductImages();
@@ -42,10 +54,29 @@ class App extends Component {
     this.props.fetchInitialProductReviews();
   }
   render() {
+    const { alert } = this.state;
     return (
       <Fragment>
         <HashRouter>
           <Route component={Navigation} />
+          {alert.prod ? (
+            <Alert
+              variant="info"
+              onClose={() => this.setState({ alert: {} })}
+              dismissible
+            >
+              <Alert.Heading>Wow!!! Don't Miss This Flash Sale</Alert.Heading>
+              <p>Check out this great sale on</p>
+              <Link
+                to={`/products/detail/${alert.prod.id}`}
+                onClick={() => this.setState({ alert: {} })}
+              >
+                {alert.prod.title}
+              </Link>
+            </Alert>
+          ) : (
+            ''
+          )}
           <Switch>
             <Route exact path="/products/:index?" component={Products} />
             <Route
@@ -97,7 +128,7 @@ const mapDispatchToProps = dispatch => {
     fetchInitialUsers: () => dispatch(fetchUsers()),
     sessionLogin: () => dispatch(sessionLogin()),
     getSessionCart: () => dispatch(getSessionCart()),
-    fetchUserOrders: userId => dispatch(fetchUserOrders(userId))
+    fetchUserOrders: userId => dispatch(fetchUserOrders(userId)),
   };
 };
 

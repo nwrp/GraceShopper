@@ -80,12 +80,12 @@ const setNavSearchValues = (categoryId, searchTerm) => ({
 const updateQuantityAC = (id, quantity) => ({
   type: UPDATE_QUANTITY,
   id,
-  quantity
+  quantity,
 });
 
-const deleteLineItemAC = (id) => ({
+const deleteLineItemAC = id => ({
   type: DELETE_LINEITEM,
-  id
+  id,
 });
 
 //THUNKS
@@ -207,14 +207,14 @@ const getSessionCart = () => {
   };
 };
 
-const deleteItemSessionCart = (productId) => {
+const deleteItemSessionCart = productId => {
   return dispatch => {
     return axios
       .delete(`./api/cart/${productId}`)
       .then(res => res.data)
-      .then(data => dispatch(setSessionCart(data)))
-  }
-}
+      .then(data => dispatch(setSessionCart(data)));
+  };
+};
 
 //create a cart for logged-in user by calling the post route
 const createPendingOrder = order => {
@@ -258,13 +258,13 @@ const updateQuantity = (id, quantity) => {
 };
 
 //delete a line-item
-const deleteItemPendingOrder = (id) => {
+const deleteItemPendingOrder = id => {
   return dispatch => {
     return axios
       .delete(`/api/orders/lineitems/${id}`)
-      .then( () => dispatch(deleteLineItemAC(id)));
-  }
-}
+      .then(() => dispatch(deleteLineItemAC(id)));
+  };
+};
 
 // const mergeCarts = (sessionCart, pendingOrder) => {
 
@@ -353,7 +353,7 @@ const orders = (state = [], action) => {
               lineitem.quantity = action.quantity;
             }
             return lineitem;
-          })
+          });
         }
         return order;
       });
@@ -361,11 +361,13 @@ const orders = (state = [], action) => {
       console.log(state);
       return state.map(order => {
         if (order.status === 'pending') {
-          const lineitems = order.lineitems.filter(item => item.id !== action.id);
+          const lineitems = order.lineitems.filter(
+            item => item.id !== action.id
+          );
           order.lineitems = lineitems;
         }
         return order;
-      })
+      });
     default:
       return state;
   }
@@ -425,5 +427,5 @@ export {
   updateNavSearchValsBasedOnURL,
   fetchReviews,
   updateQuantity,
-  deleteItemPendingOrder
+  deleteItemPendingOrder,
 };
