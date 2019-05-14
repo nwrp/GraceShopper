@@ -8,7 +8,8 @@ import {
   createPendingOrder,
   addToCart,
   createSessionCart,
-  setSessionCart
+  setSessionCart,
+  updateQuantity
 } from './store';
 
 class ProductDetail extends Component {
@@ -65,6 +66,12 @@ class ProductDetail extends Component {
   };
 
   addToCartOrder = order => {
+    const existingli = this.props.order.lineitems.find(li => li.productId === this.props.match.params.id * 1);
+    if (existingli) {
+      const newQuant = existingli.quantity + 1;
+      this.props.updateQuantity(existingli.id, newQuant)
+        .then( () => this.props.history.push('/cart'));
+    } else {
     this.props
       .addToCart({
         orderId: order.id,
@@ -74,6 +81,7 @@ class ProductDetail extends Component {
         netTotalCost: this.displayProduct().price
       })
       .then(() => this.props.history.push('/cart'));
+    }
   };
 
   handleAddToCartLoggedIn = () => {
@@ -225,16 +233,18 @@ class ProductDetail extends Component {
                         onClick={() => this.addToCart(product, 1)}
                         size="lg"
                       >
-                        <i className="fas fa-shopping-cart" />
+                        <i className="fas fa-cart-arrow-down" />
                       </Button>
                     </Row>
                   </Col>
-                  <Col className="d-flex flex-column align-item-start">
-                    <Row className="d-flex m-auto">
-                      <h4>{product.title}</h4>
+                  <Col className="d-flex flex-column justify-content-center">
+                    <Row className="justify-content-center">
+                      <h4 className="mb-4">{product.title}</h4>
+                    </Row>
+                    <Row className="justify-content-center mb-4">
                       <p className="text-justify">{product.description}</p>
                     </Row>
-                    <Row>
+                    <Row className="mt-6">
                       <ProductImages
                         categoryColor={
                           this.findCategory(product, categories).color
@@ -250,11 +260,7 @@ class ProductDetail extends Component {
                     <Card>
                       <Card.Header
                         className="text-center"
-                        // style={{
-                        //   backgroundColor: `${
-                        //     this.findCategory(product, categories).color
-                        //   }`
-                        // }}
+                        style={{ padding: 0 }}
                       >
                         Verified Puchase Reviews
                       </Card.Header>
@@ -297,7 +303,8 @@ const mapDispatchToProps = dispatch => {
     addToCart: item => dispatch(addToCart(item)),
     requestCreateSessionCart: sessionCart =>
       dispatch(createSessionCart(sessionCart)),
-    requestUpdateCart: sessionCart => dispatch(setSessionCart(sessionCart))
+    requestUpdateCart: sessionCart => dispatch(setSessionCart(sessionCart)),
+    updateQuantity: (id, quantity) => dispatch(updateQuantity(id, quantity))
   };
 };
 

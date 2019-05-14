@@ -40,6 +40,19 @@ router.get('/user/:id', (req, res, next) => {
         })
 })
 
+// Submit order as complete
+router.put('/:id', (req, res, next) => {
+    Order.findByPk(req.params.id)
+        .then(order => {
+            order.update({
+                status: 'purchased'
+            })
+                .then(data => res.send(data))
+                .catch(next)
+        })
+        .catch(next)
+})
+
 // Returns individual order where id === route id
 router.get('/:id', (req, res, next) => {
     Order.findByPk(req.params.id, {
@@ -86,6 +99,15 @@ router.put('/lineitems/:id', (req, res, next) => {
         .then(lineItem => lineItem.update(req.body))
         .then(() => res.sendStatus(200))
         .catch(next);
+})
+
+//deletes a line item
+
+router.delete('/lineitems/:id', (req, res, next) => {
+    LineItem.findByPk(req.params.id)
+        .then( (item) => item.destroy())
+        .then( () => res.sendStatus(204))
+        .catch(next)
 })
 
 module.exports = router;

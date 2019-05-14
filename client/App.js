@@ -13,15 +13,17 @@ import {
   fetchUsers,
   sessionLogin,
   getSessionCart,
-  fetchUserOrders,
+  fetchUserOrders
 } from './store';
 import Home from './Home';
 import Admin from './AccountViews/AdminAccount';
 import Login from './Login';
 import Cart from './Cart';
 import Checkout from './CheckOut';
-import CheckoutGeneric from './CheckoutGeneric'; 
+import CheckoutGeneric from './CheckoutGeneric';
+import CheckoutSuccess from './CheckoutSuccess';
 import UserAccount from './AccountViews/UserAccount';
+import SignUp from './SignUp';
 
 class App extends Component {
   componentDidMount() {
@@ -29,7 +31,13 @@ class App extends Component {
     this.props.fetchInitialProducts();
     this.props.fetchInitialProductImages();
     this.props.fetchInitialUsers();
-    this.props.sessionLogin();
+    this.props.sessionLogin().then(user => {
+      console.log(user);
+      if (user.id) {
+        console.log(user.id);
+        this.props.fetchUserOrders(user.id);
+      }
+    });
     this.props.getSessionCart();
     this.props.fetchInitialProductReviews();
   }
@@ -64,8 +72,10 @@ class App extends Component {
             <Route exact path="/admin" component={Admin} />
             <Route exact path="/user" component={UserAccount} />
             <Route exact path="/login" component={Login} />
+            <Route exact path="/signup" component={SignUp} />
             <Route exact path="/cart" component={Cart} />
             <Route exact path="/checkout" component={CheckoutGeneric} />
+            <Route exact path="/checkout/success" component={CheckoutSuccess} />
             <Route exact path="/orders/:orderId" component={Checkout} />
             <Route
               render={() => <div>Sorry That Page Couldn't Be Found</div>}
@@ -87,7 +97,7 @@ const mapDispatchToProps = dispatch => {
     fetchInitialUsers: () => dispatch(fetchUsers()),
     sessionLogin: () => dispatch(sessionLogin()),
     getSessionCart: () => dispatch(getSessionCart()),
-    fetchUserOrders: userId => dispatch(fetchUserOrders(userId)),
+    fetchUserOrders: userId => dispatch(fetchUserOrders(userId))
   };
 };
 

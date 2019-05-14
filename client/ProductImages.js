@@ -3,7 +3,6 @@ import { Button, ButtonGroup, Container, Image, Row } from 'react-bootstrap';
 import { connect } from 'react-redux';
 
 const ProductImages = ({
-  categories,
   products,
   productImages,
   prodId,
@@ -32,7 +31,7 @@ const ProductImages = ({
                   variant="outline"
                   onClick={handleClick}
                   href={img.imageUrl}
-                  // active
+                  active
                 >
                   <Image
                     style={{ height: '80px' }}
@@ -51,9 +50,8 @@ const ProductImages = ({
   );
 };
 
-const mapStateToProps = ({ categories, productImages, products }) => {
+const mapStateToProps = ({ productImages, products }) => {
   return {
-    categories,
     productImages,
     products
   };

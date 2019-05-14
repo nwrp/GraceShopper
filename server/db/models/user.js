@@ -73,10 +73,6 @@ const User = conn.define("user", {
 
   creditcard: {
     type: Sequelize.STRING,
-    allowNull: false,
-    validate: {
-      notEmpty: true
-    }
   }
 });
 

@@ -1,16 +1,33 @@
 import React from 'react';
 import {
   Accordion,
+  Badge,
   Button,
   Card,
   Col,
-  Pagination,
   Table,
   Row
 } from 'react-bootstrap';
 
 const OrdersPanel = props => {
   const orders = props.orders;
+
+  const getBadge = status => {
+    const colorKey = {
+      cancelled: 'danger',
+      pending: 'warning',
+      purchased: 'success',
+      shipped: 'info'
+    };
+    return colorKey[status];
+  };
+
+  const calculateOrderTotal = order => {
+    return order.lineitems.reduce((acc, item) => {
+      acc += item.quantity * item.netTotalCost;
+      return acc;
+    }, 0);
+  };
 
   return (
     <Row>
@@ -27,7 +44,9 @@ const OrdersPanel = props => {
                 <thead>
                   <tr>
                     <th>OrderId</th>
-                    <th>UserId</th>
+                    <th>Date</th>
+                    <th>Items</th>
+                    <th>Price</th>
                     <th>Status</th>
                   </tr>
                 </thead>
@@ -36,22 +55,34 @@ const OrdersPanel = props => {
                     ? orders.map(order => (
                         <tr key={order.id}>
                           <td>{order.id}</td>
-                          <td>{order.userId}</td>
-                          <td>{order.status}</td>
+                          <td>{order.createdAt.slice(0, 10)}</td>
+                          <td>
+                            {order.lineitems.map(item => (
+                              <Row key={item.id}>
+                                <Col>
+                                  <Card.Link
+                                    style={{ textDecoration: 'none' }}
+                                    href={`/#/products/detail/${
+                                      item.productId
+                                    }`}
+                                  >
+                                    {item.product.title}
+                                  </Card.Link>
+                                </Col>
+                              </Row>
+                            ))}
+                          </td>
+                          <td>{calculateOrderTotal(order)}</td>
+                          <td>
+                            <Badge variant={getBadge(order.status)} size="lg">
+                              {order.status.toUpperCase()}
+                            </Badge>
+                          </td>
                         </tr>
                       ))
                     : null}
                 </tbody>
               </Table>
-
-              <Pagination>
-                <Pagination.Prev />
-                <Pagination.Item>1</Pagination.Item>
-                <Pagination.Item>2</Pagination.Item>
-                <Pagination.Item>3</Pagination.Item>
-                <Pagination.Item>4</Pagination.Item>
-                <Pagination.Next />
-              </Pagination>
             </Card.Body>
           </Accordion.Collapse>
         </Card>

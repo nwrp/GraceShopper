@@ -5,7 +5,6 @@ import {
   Button,
   Card,
   Col,
-  Pagination,
   Table,
   Row
 } from 'react-bootstrap';
@@ -32,6 +31,7 @@ const InventoryPanel = props => {
                     <th>Price</th>
                     <th>Category</th>
                     <th>Quantity</th>
+                    <th>Status</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -51,15 +51,6 @@ const InventoryPanel = props => {
                     : null}
                 </tbody>
               </Table>
-
-              <Pagination>
-                <Pagination.Prev />
-                <Pagination.Item>1</Pagination.Item>
-                <Pagination.Item>2</Pagination.Item>
-                <Pagination.Item>3</Pagination.Item>
-                <Pagination.Item>4</Pagination.Item>
-                <Pagination.Next />
-              </Pagination>
             </Card.Body>
           </Accordion.Collapse>
         </Card>

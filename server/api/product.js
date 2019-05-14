@@ -18,9 +18,9 @@ router.get('/productsWithCount/:index?', (req, res, next) => {
     })
     .then(() => {
       Product.findAll({
-        offset: 10 * (req.params.index ? req.params.index * 1 : 0),
-        limit: 10,
-        order: [['categoryId', 'ASC'], ['title', 'ASC']],
+        offset: 8 * (req.params.index ? req.params.index * 1 : 0),
+        limit: 8,
+        order: [['categoryId', 'ASC'], ['title', 'ASC']]
       })
         .then(products => {
           countAndProducts.products = products;
@@ -42,8 +42,8 @@ router.get(
       req.params.categoryId && req.params.categoryId !== '0'
         ? {
             where: {
-              categoryId: req.params.categoryId * 1,
-            },
+              categoryId: req.params.categoryId * 1
+            }
           }
         : {}
     )
@@ -55,16 +55,16 @@ router.get(
           req.params.categoryId && req.params.categoryId !== '0'
             ? {
                 where: {
-                  categoryId: req.params.categoryId * 1,
+                  categoryId: req.params.categoryId * 1
                 },
-                offset: 10 * (req.params.index ? req.params.index * 1 : 0),
-                limit: 10,
-                order: [['categoryId', 'ASC'], ['title', 'ASC']],
+                offset: 8 * (req.params.index ? req.params.index * 1 : 0),
+                limit: 8,
+                order: [['categoryId', 'ASC'], ['title', 'ASC']]
               }
             : {
-                offset: 10 * (req.params.index ? req.params.index * 1 : 0),
-                limit: 10,
-                order: [['categoryId', 'ASC'], ['title', 'ASC']],
+                offset: 8 * (req.params.index ? req.params.index * 1 : 0),
+                limit: 8,
+                order: [['categoryId', 'ASC'], ['title', 'ASC']]
               }
         )
           .then(products => {
@@ -94,11 +94,11 @@ router.get(
                   title: {
                     [Sequelize.Op.iLike]: `%${
                       req.params.searchTerm ? req.params.searchTerm : ''
-                    }%`,
-                  },
-                },
-              ],
-            },
+                    }%`
+                  }
+                }
+              ]
+            }
           }
         : {
             where: {
@@ -107,11 +107,11 @@ router.get(
                   title: {
                     [Sequelize.Op.iLike]: `%${
                       req.params.searchTerm ? req.params.searchTerm : ''
-                    }%`,
-                  },
-                },
-              ],
-            },
+                    }%`
+                  }
+                }
+              ]
+            }
           }
     )
       .then(records => {
@@ -128,14 +128,14 @@ router.get(
                       title: {
                         [Sequelize.Op.iLike]: `%${
                           req.params.searchTerm ? req.params.searchTerm : ''
-                        }%`,
-                      },
-                    },
-                  ],
+                        }%`
+                      }
+                    }
+                  ]
                 },
                 offset: 10 * (req.params.index ? req.params.index * 1 : 0),
                 limit: 10,
-                order: [['categoryId', 'ASC'], ['title', 'ASC']],
+                order: [['categoryId', 'ASC'], ['title', 'ASC']]
               }
             : {
                 where: {
@@ -144,14 +144,14 @@ router.get(
                       title: {
                         [Sequelize.Op.iLike]: `%${
                           req.params.searchTerm ? req.params.searchTerm : ''
-                        }%`,
-                      },
-                    },
-                  ],
+                        }%`
+                      }
+                    }
+                  ]
                 },
                 offset: 10 * (req.params.index ? req.params.index * 1 : 0),
                 limit: 10,
-                order: [['categoryId', 'ASC'], ['title', 'ASC']],
+                order: [['categoryId', 'ASC'], ['title', 'ASC']]
               }
         )
           .then(products => {
@@ -169,7 +169,7 @@ router.get(
 //GET /api/products/productId/productimagesId
 router.get('/productImages', (req, res, next) => {
   ProductImage.findAll({
-    include: [{ model: Product }],
+    include: [{ model: Product }]
   })
     .then(images => res.send(images))
     .catch(next);
@@ -190,6 +190,14 @@ router.post('/', (req, res, next) => {
 });
 
 //PUT /api/products
+router.put('/:id', (req, res, next) => {
+  Product.findByPk(req.params.id)
+    .then(product => product.update(req.body))
+    .then(product => res.send(product))
+    .catch(next);
+});
+
+//PUT /api/products
 router.put('/', (req, res, next) => {
   Product.findByPk(req, params.id)
     .then(product => product.update(req.body))
@@ -201,8 +209,8 @@ router.put('/', (req, res, next) => {
 router.delete('/', (req, res, next) => {
   Product.destroy({
     where: {
-      id: req.params.id,
-    },
+      id: req.params.id
+    }
   })
     .then(() => res.sendStatus(204))
     .catch(next);

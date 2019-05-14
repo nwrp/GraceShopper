@@ -18,6 +18,7 @@ const SET_SESSION_CART = 'SET_SESSION_CART';
 const SET_NAV_SEARCH_VALUES = 'SET_NAV_SEARCH_VALUES';
 const GET_REVIEWS = 'GET_REVIEWS';
 const UPDATE_QUANTITY = 'UPDATE_QUANTITY';
+const DELETE_LINEITEM = 'DELETE_LINEITEM';
 
 //ACTION CREATORS
 
@@ -74,6 +75,17 @@ const setNavSearchValues = (categoryId, searchTerm) => ({
   type: SET_NAV_SEARCH_VALUES,
   categoryId,
   searchTerm,
+});
+
+const updateQuantityAC = (id, quantity) => ({
+  type: UPDATE_QUANTITY,
+  id,
+  quantity
+});
+
+const deleteLineItemAC = (id) => ({
+  type: DELETE_LINEITEM,
+  id
 });
 
 //THUNKS
@@ -140,7 +152,10 @@ const sessionLogin = () => {
     return axios
       .get('/api/auth')
       .then(res => res.data)
-      .then(userData => dispatch(setUserActionCreator(userData)));
+      .then(userData => {
+        dispatch(setUserActionCreator(userData));
+        return userData;
+      });
   };
 };
 
@@ -170,7 +185,7 @@ const fetchUserOrders = userId => {
       .then(response => response.data)
       .then(data => {
         dispatch(getOrders(data));
-        // Call the functionality to merge sessionCart and pending cart
+        return data;
       });
   };
 };
@@ -241,6 +256,15 @@ const updateQuantity = (id, quantity) => {
       .then(() => dispatch(updateQuantityAC(id, quantity)));
   };
 };
+
+//delete a line-item
+const deleteItemPendingOrder = (id) => {
+  return dispatch => {
+    return axios
+      .delete(`/api/orders/lineitems/${id}`)
+      .then( () => dispatch(deleteLineItemAC(id)));
+  }
+}
 
 // const mergeCarts = (sessionCart, pendingOrder) => {
 
@@ -321,6 +345,27 @@ const orders = (state = [], action) => {
         }
         return order;
       });
+    case UPDATE_QUANTITY:
+      return state.map(order => {
+        if (order.status === 'pending') {
+          order.lineitems.map(lineitem => {
+            if (lineitem.id === action.id) {
+              lineitem.quantity = action.quantity;
+            }
+            return lineitem;
+          })
+        }
+        return order;
+      });
+    case DELETE_LINEITEM:
+      console.log(state);
+      return state.map(order => {
+        if (order.status === 'pending') {
+          const lineitems = order.lineitems.filter(item => item.id !== action.id);
+          order.lineitems = lineitems;
+        }
+        return order;
+      })
     default:
       return state;
   }
@@ -380,4 +425,5 @@ export {
   updateNavSearchValsBasedOnURL,
   fetchReviews,
   updateQuantity,
+  deleteItemPendingOrder
 };

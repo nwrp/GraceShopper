@@ -3,7 +3,6 @@ import { Card, Col, Container, Row } from 'react-bootstrap';
 import Ratings from './Ratings';
 
 const Reviews = ({ reviews }) => {
-  console.log('reviews in Reviews', reviews);
   if (reviews) {
     return (
       <Fragment>

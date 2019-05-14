@@ -2,15 +2,6 @@ import React from 'react';
 import { Accordion, Button, Card, Col, Table, Row } from 'react-bootstrap';
 
 const CreditCardsPanel = props => {
-  //temp hard seed creditCards
-  const creditCards = [
-    {
-      name: 'userName onCard',
-      number: '0000 0000 0000 0000',
-      expires: '01-2020'
-    }
-  ];
-
   return (
     <Row>
       <Col>
@@ -25,19 +16,19 @@ const CreditCardsPanel = props => {
               <Table hover bordered striped responsive size="sm">
                 <thead>
                   <tr>
-                    <th>Name On Card</th>
+                    <th>NameOnCard</th>
                     <th>Card Number</th>
                     <th>Expires</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {creditCards.map(card => (
-                    <tr key={card.number}>
-                      <td>{card.name}</td>
-                      <td>{card.number}</td>
-                      <td>{card.expires}</td>
-                    </tr>
-                  ))}
+                  <tr>
+                    <td>
+                      {props.user.firstname} {props.user.lastname}
+                    </td>
+                    <td>{props.user.creditcard}</td>
+                    <td>01-2020</td>
+                  </tr>
                 </tbody>
               </Table>
             </Card.Body>

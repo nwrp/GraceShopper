@@ -7,11 +7,11 @@ const Home = ({ categories }) => {
   const dvdUrls = [
     'http://i65.tinypic.com/2sblgz5.jpg',
     'http://i65.tinypic.com/j6515e.jpg',
-    'http://i65.tinypic.com/anbp8h.jpg',
+    'http://i65.tinypic.com/anbp8h.jpg'
   ];
 
   return (
-    <Container className="d-flex-row">
+    <Container className="d-flex flex-column">
       {/* <Row>
         <Col />
         <Col>
@@ -27,7 +27,7 @@ const Home = ({ categories }) => {
                 style={{
                   width: '15rem',
                   height: '15rem',
-                  backgroundColor: `${category.color}`,
+                  backgroundColor: `${category.color}`
                 }}
                 className="my-3 justify-content-center "
               >
@@ -36,7 +36,7 @@ const Home = ({ categories }) => {
                     className="white-text-with-blue-shadow text-center"
                     style={{
                       fontSize: '22px',
-                      color: 'white',
+                      color: 'white'
                     }}
                   >
                     {category.name}
@@ -47,10 +47,10 @@ const Home = ({ categories }) => {
           );
         })}
       </Row>
-      <Row>
+      <Row className="align-items-center">
         {dvdUrls.map(image => {
           return (
-            <Col key={image}>
+            <Col key={image} lg={4}>
               <Figure>
                 <Figure.Image
                   width={300}
@@ -66,13 +66,17 @@ const Home = ({ categories }) => {
           );
         })}
       </Row>
+      <br />
+      <br />
+      <br />
+      <br />
     </Container>
   );
 };
 
 const mapStateToProps = ({ categories }) => {
   return {
-    categories,
+    categories
   };
 };
 

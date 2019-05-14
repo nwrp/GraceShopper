@@ -8,4 +8,13 @@ router.get('/', (req, res, next) => {
     .catch(next);
 });
 
+router.post('/', (req, res, next) => {
+  console.log(req.body);
+  User.create(req.body)
+    .then(newUser => {
+      console.log(newUser)
+      res.send(newUser)})
+    .catch(next);
+})
+
 module.exports = router;

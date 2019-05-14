@@ -1,10 +1,10 @@
-const Product = require('./models/product');
-const ProductImage = require('./models/productimage');
-const ProductReview = require('./models/productreview');
-const Category = require('./models/category');
-const User = require('./models/user');
-const Order = require('./models/order');
-const LineItem = require('./models/lineitem');
+const Product = require("./models/product");
+const ProductImage = require("./models/productimage");
+const ProductReview = require("./models/productreview");
+const Category = require("./models/category");
+const User = require("./models/user");
+const Order = require("./models/order");
+const LineItem = require("./models/lineitem");
 const {
   seedCategories,
   seedProducts,
@@ -12,8 +12,8 @@ const {
   seedOrders,
   seedLineItems,
   seedReviews
-} = require('./seed');
-const conn = require('./db');
+} = require("./seed");
+const conn = require("./db");
 
 const syncAndSeed = () => {
   return conn
@@ -22,24 +22,30 @@ const syncAndSeed = () => {
       seedCategories.map(cat => Category.create(cat));
     })
     .then(() => {
-      Promise.all(
+      return Promise.all(
         seedProducts.map(prod =>
           Product.create(prod).then(product =>
             prod.detailImages.map(img => {
               ProductImage.create({ imageUrl: img, productId: product.id });
-            })))
+            })
+          )
+        )
       );
     })
     .then(() => {
-      Promise.all(seedUsers.map(user => User.create(user)))
+      return Promise.all(seedUsers.map(user => User.create(user)))
         .then(() => {
-          Promise.all(seedOrders.map(order => Order.create(order)));
+          return Promise.all(seedOrders.map(order => Order.create(order)));
         })
         .then(() => {
-          Promise.all(seedLineItems.map(lineitem => LineItem.create(lineitem)));
+          return Promise.all(
+            seedLineItems.map(lineitem => LineItem.create(lineitem))
+          );
         })
         .then(() => {
-          Promise.all(seedReviews.map(review => ProductReview.create(review)));
+          return Promise.all(
+            seedReviews.map(review => ProductReview.create(review))
+          );
         });
     });
 };

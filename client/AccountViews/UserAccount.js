@@ -11,12 +11,12 @@ class UserAccount extends Component {
   }
 
   render() {
-    const { user, orders } = this.props;
+    const { user, orders, reviews } = this.props;
 
-    if (user) {
+    if (user.id) {
       return (
         <Accordion>
-          <Card>
+          <Card className="my-3">
             <Card.Header
               style={{ backgroundColor: '#f46854' }}
               className="text-white"
@@ -24,26 +24,35 @@ class UserAccount extends Component {
               User Account
             </Card.Header>
             <Card.Body>
-              <Row>
-                <Col>{user.name}</Col>
-              </Row>
-              <Row>
-                <Col>{user.email}</Col>
-              </Row>
-              <Row>
-                <Col>
-                  <small className="text-center">
-                    registered user since {user.createdAt.slice(0, 10)}
-                  </small>
-                </Col>
-              </Row>
+              <div className="ml-3">
+                <Row>
+                  <Col>
+                    {user.firstname} {user.lastname}
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>{user.email}</Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <small className="text-center">
+                      registered user since {user.createdAt.slice(0, 10)}
+                    </small>
+                  </Col>
+                </Row>
+              </div>
               <hr />
 
               <OrdersPanel orders={orders} />
-              <ReviewsPanel />
-              <CreditCardsPanel />
+              <CreditCardsPanel user={user} />
+              <ReviewsPanel reviews={reviews} user={user} />
             </Card.Body>
+            <Card.Footer style={{ backgroundColor: '#f46854' }} />
           </Card>
+          <br />
+          <br />
+          <br />
+          <br />
         </Accordion>
       );
     } else {
@@ -52,11 +61,12 @@ class UserAccount extends Component {
   }
 }
 
-const mapStateToProps = ({ products, user, orders }) => {
+const mapStateToProps = ({ products, user, orders, reviews }) => {
   return {
     products,
     user,
-    orders
+    orders,
+    reviews
   };
 };
 

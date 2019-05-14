@@ -9,7 +9,7 @@ class Admin extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      accordion: [],
+      accordion: []
     };
   }
 
@@ -22,16 +22,16 @@ class Admin extends Component {
     const state = prevState.map((x, index) => (tab === index ? !x : false));
 
     this.setState({
-      accordion: state,
+      accordion: state
     });
   };
 
   render() {
     const { products, users, user, orders } = this.props;
-
+    if (user.id){
     return (
       <Accordion>
-        <Card>
+        <Card className="my-3">
           <Card.Header
             style={{ backgroundColor: '#ee2a82' }}
             className="text-white"
@@ -39,28 +39,47 @@ class Admin extends Component {
             Administrator Account
           </Card.Header>
           <Card.Body>
-            <Row>
-              <Col>{user.name}</Col>
-            </Row>
-            <Row>
-              <Col>{user.email}</Col>
-            </Row>
+            <div className="ml-3">
+              <Row>
+                <Col>
+                  {user.firstname} {user.lastname}
+                </Col>
+              </Row>
+              <Row>
+                <Col>{user.email}</Col>
+              </Row>
+              <Row>
+                <Col>
+                  <small className="text-center">
+                    administrator since {user.createdAt.slice(0, 10)}
+                  </small>
+                </Col>
+              </Row>
+            </div>
             <hr />
             <OrdersPanel orders={orders} />
             <UsersPanel users={users} />
             <InventoryPanel products={products} />
           </Card.Body>
+          <Card.Footer style={{ backgroundColor: '#ee2a82' }} />
         </Card>
+        <br />
+        <br />
+        <br />
+        <br />
       </Accordion>
     );
+  } else {
+    return <div>Oop! You may not have permission to view this page.</div>
   }
+}
 }
 const mapStateToProps = ({ products, users, user, orders }) => {
   return {
     products,
     users,
     orders,
-    user,
+    user
   };
 };
 
